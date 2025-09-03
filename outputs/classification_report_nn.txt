@@ -1,0 +1,10 @@
+Model: nn\nEvaluation Date: 2025-08-26 21:23:58.590364\n\nTest Results:\nAccuracy: 0.4595\nPrecision: 0.5847\nRecall: 0.4595\nF1 Score: 0.4765\nROC AUC: 0.5031\n\nClassification Report:\n              precision    recall  f1-score   support
+
+      Normal       0.71      0.40      0.51      7040
+       Fraud       0.30      0.60      0.40      2960
+
+    accuracy                           0.46     10000
+   macro avg       0.50      0.50      0.45     10000
+weighted avg       0.58      0.46      0.48     10000
+\n\nConfusion Matrix:\n[[2805 4235]
+ [1170 1790]]

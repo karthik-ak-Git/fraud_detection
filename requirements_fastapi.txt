@@ -1,0 +1,33 @@
+# Enhanced Fraud Detection System Requirements
+# FastAPI implementation with 99% accuracy target
+
+# Core ML and Data Science
+torch>=1.13.0
+torchvision>=0.14.0
+scikit-learn>=1.2.0
+pandas>=1.5.0
+numpy>=1.21.0
+matplotlib>=3.6.0
+seaborn>=0.12.0
+imbalanced-learn>=0.10.0
+joblib>=1.2.0
+
+# FastAPI and Web Framework
+fastapi>=0.88.0
+uvicorn[standard]>=0.20.0
+python-multipart>=0.0.5
+aiofiles>=22.1.0
+
+# Data Validation and Serialization
+pydantic>=1.10.0
+
+# Development and Utilities
+tqdm>=4.64.0
+python-dotenv>=0.21.0
+
+# Optional GPU support (uncomment if CUDA available)
+# torch>=1.13.0+cu117 --extra-index-url https://download.pytorch.org/whl/cu117
+
+# Additional utilities for production
+psutil>=5.9.0
+requests>=2.28.0

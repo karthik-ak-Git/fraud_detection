@@ -1,0 +1,8 @@
+{
+  "timestamp": "2025-08-26T21:51:00.914218",
+  "test_accuracy": 1.0,
+  "test_f1": 1.0,
+  "test_auc": 1.0,
+  "model_path": "models/high_accuracy_model.pth",
+  "scaler_path": "models/scaler.pkl"
+}

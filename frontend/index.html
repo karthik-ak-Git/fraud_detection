@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Detection System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-shield-alt me-2"></i>
+                Fraud Detection System
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text" id="modelStatus">
+                    <i class="fas fa-circle text-success"></i> Model Ready
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Header Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-gradient-primary text-white">
+                    <div class="card-body text-center">
+                        <h1 class="card-title mb-3">
+                            <i class="fas fa-brain me-2"></i>
+                            AI-Powered Fraud Detection
+                        </h1>
+                        <p class="card-text lead">
+                            Advanced neural network system for real-time transaction fraud detection
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="row">
+            <!-- Transaction Input Form -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-credit-card me-2"></i>
+                            Transaction Analysis
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="transactionForm">
+                            <!-- Transaction Amount -->
+                            <div class="mb-3">
+                                <label for="amount" class="form-label">
+                                    <i class="fas fa-dollar-sign me-1"></i>
+                                    Transaction Amount
+                                </label>
+                                <input type="number" class="form-control" id="amount" step="0.01" min="0"
+                                    placeholder="Enter transaction amount" required>
+                            </div>
+
+                            <!-- Account Balances -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="oldbalanceOrg" class="form-label">Origin Old Balance</label>
+                                    <input type="number" class="form-control" id="oldbalanceOrg" step="0.01" min="0"
+                                        placeholder="0.00">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="newbalanceOrig" class="form-label">Origin New Balance</label>
+                                    <input type="number" class="form-control" id="newbalanceOrig" step="0.01" min="0"
+                                        placeholder="0.00">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="oldbalanceDest" class="form-label">Destination Old Balance</label>
+                                    <input type="number" class="form-control" id="oldbalanceDest" step="0.01" min="0"
+                                        placeholder="0.00">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="newbalanceDest" class="form-label">Destination New Balance</label>
+                                    <input type="number" class="form-control" id="newbalanceDest" step="0.01" min="0"
+                                        placeholder="0.00">
+                                </div>
+                            </div>
+
+                            <!-- Time Information -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="hour" class="form-label">
+                                        <i class="fas fa-clock me-1"></i>
+                                        Hour of Day
+                                    </label>
+                                    <select class="form-select" id="hour">
+                                        <option value="">Select hour</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="day_of_week" class="form-label">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        Day of Week
+                                    </label>
+                                    <select class="form-select" id="day_of_week">
+                                        <option value="">Select day</option>
+                                        <option value="0">Monday</option>
+                                        <option value="1">Tuesday</option>
+                                        <option value="2">Wednesday</option>
+                                        <option value="3">Thursday</option>
+                                        <option value="4">Friday</option>
+                                        <option value="5">Saturday</option>
+                                        <option value="6">Sunday</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Transaction Frequency -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="transaction_count_1h" class="form-label">Transactions (1 hour)</label>
+                                    <input type="number" class="form-control" id="transaction_count_1h" min="0"
+                                        placeholder="0" value="1">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="transaction_count_24h" class="form-label">Transactions (24
+                                        hours)</label>
+                                    <input type="number" class="form-control" id="transaction_count_24h" min="0"
+                                        placeholder="0" value="1">
+                                </div>
+                            </div>
+
+                            <!-- Transaction Type -->
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-exchange-alt me-1"></i>
+                                    Transaction Type
+                                </label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="transactionType"
+                                                id="cash_in" value="CASH_IN">
+                                            <label class="form-check-label" for="cash_in">Cash In</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="transactionType"
+                                                id="cash_out" value="CASH_OUT">
+                                            <label class="form-check-label" for="cash_out">Cash Out</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="transactionType"
+                                                id="debit" value="DEBIT">
+                                            <label class="form-check-label" for="debit">Debit</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="transactionType"
+                                                id="payment" value="PAYMENT" checked>
+                                            <label class="form-check-label" for="payment">Payment</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="transactionType"
+                                                id="transfer" value="TRANSFER">
+                                            <label class="form-check-label" for="transfer">Transfer</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg" id="analyzeBtn">
+                                    <i class="fas fa-search me-2"></i>
+                                    Analyze Transaction
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="generateSampleBtn">
+                                    <i class="fas fa-magic me-2"></i>
+                                    Generate Sample Transaction
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Analysis Results
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="resultsContainer">
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-chart-pie fa-3x mb-3"></i>
+                                <p class="lead">Enter transaction details and click "Analyze Transaction" to see results
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            System Statistics
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" id="statsContainer">
+                            <div class="col-md-3 mb-3">
+                                <div class="text-center">
+                                    <div class="display-6 text-primary" id="totalPredictions">-</div>
+                                    <small class="text-muted">Total Predictions</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="text-center">
+                                    <div class="display-6 text-danger" id="fraudDetected">-</div>
+                                    <small class="text-muted">Fraud Cases</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="text-center">
+                                    <div class="display-6 text-warning" id="fraudRate">-</div>
+                                    <small class="text-muted">Fraud Rate (%)</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="text-center">
+                                    <div class="display-6 text-success" id="modelAccuracy">-</div>
+                                    <small class="text-muted">Model Accuracy (%)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h4 class="mb-0">
+                            <i class="fas fa-comment-alt me-2"></i>
+                            Feedback & Model Improvement
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="feedbackSection" style="display: none;">
+                            <form id="feedbackForm">
+                                <input type="hidden" id="lastPrediction" />
+                                <input type="hidden" id="lastTransactionData" />
+
+                                <div class="mb-3">
+                                    <label class="form-label">Was the prediction correct?</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="feedback"
+                                            id="feedbackCorrect" value="correct">
+                                        <label class="form-check-label" for="feedbackCorrect">
+                                            <i class="fas fa-check text-success me-1"></i>
+                                            Yes, the prediction was correct
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="feedback"
+                                            id="feedbackIncorrect" value="incorrect">
+                                        <label class="form-check-label" for="feedbackIncorrect">
+                                            <i class="fas fa-times text-danger me-1"></i>
+                                            No, the prediction was incorrect
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3" id="correctClassSection" style="display: none;">
+                                    <label for="correctClass" class="form-label">What was the correct
+                                        classification?</label>
+                                    <select class="form-select" id="correctClass">
+                                        <option value="">Select correct classification</option>
+                                        <option value="normal">Normal Transaction</option>
+                                        <option value="fraud">Fraudulent Transaction</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="feedbackComment" class="form-label">Additional Comments
+                                        (Optional)</label>
+                                    <textarea class="form-control" id="feedbackComment" rows="3"
+                                        placeholder="Please provide any additional context..."></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="fas fa-paper-plane me-2"></i>
+                                    Submit Feedback
+                                </button>
+                            </form>
+                        </div>
+                        <div id="noFeedbackMessage" class="text-muted text-center py-3">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Make a prediction first to provide feedback
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5>Analyzing Transaction...</h5>
+                    <p class="text-muted">Please wait while our AI model processes the data</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i>
+                    Operation completed successfully!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+
+        <div id="errorToast" class="toast align-items-center text-white bg-danger border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    An error occurred. Please try again.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="scripts.js"></script>
+</body>
+
+</html>

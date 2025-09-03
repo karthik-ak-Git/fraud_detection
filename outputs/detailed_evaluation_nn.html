@@ -1,0 +1,92 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Fraud Detection Model Evaluation Report</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 40px; }
+                .header { background-color: #2c3e50; color: white; padding: 20px; text-align: center; }
+                .section { margin: 20px 0; }
+                .metric { background-color: #f8f9fa; padding: 15px; margin: 10px 0; border-left: 4px solid #007bff; }
+                .metric-value { font-size: 1.5em; font-weight: bold; color: #007bff; }
+                table { border-collapse: collapse; width: 100%; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+                th { background-color: #f2f2f2; }
+                .fraud { background-color: #ffebee; }
+                .normal { background-color: #e8f5e8; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>Fraud Detection Model Evaluation Report</h1>
+                <p>Model: NN | Date: 2025-08-26 21:25:46</p>
+            </div>
+            
+            <div class="section">
+                <h2>Model Information</h2>
+                <p><strong>Model Type:</strong> nn</p>
+                <p><strong>Input Features:</strong> 14</p>
+                <p><strong>Training Epochs:</strong> 9</p>
+                <p><strong>Validation Accuracy:</strong> 45.62%</p>
+            </div>
+            
+            <div class="section">
+                <h2>Overall Performance Metrics</h2>
+                <div class="metric">
+                    <strong>Accuracy:</strong> <span class="metric-value">0.4607</span>
+                </div>
+                <div class="metric">
+                    <strong>ROC AUC:</strong> <span class="metric-value">0.4966</span>
+                </div>
+                <div class="metric">
+                    <strong>F1 Score (Weighted):</strong> <span class="metric-value">0.4772</span>
+                </div>
+                <div class="metric">
+                    <strong>Precision (Weighted):</strong> <span class="metric-value">0.5784</span>
+                </div>
+                <div class="metric">
+                    <strong>Recall (Weighted):</strong> <span class="metric-value">0.4607</span>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Per-Class Performance</h2>
+                <table>
+                    <tr>
+                        <th>Class</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>F1-Score</th>
+                    </tr>
+                    <tr class="normal">
+                        <td><strong>Normal Transactions</strong></td>
+                        <td>0.6981</td>
+                        <td>0.4027</td>
+                        <td>0.5108</td>
+                    </tr>
+                    <tr class="fraud">
+                        <td><strong>Fraud Transactions</strong></td>
+                        <td>0.3004</td>
+                        <td>0.5955</td>
+                        <td>0.3993</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="section">
+                <h2>Data Distribution</h2>
+                <p><strong>Total Test Samples:</strong> 4000</p>
+                <p><strong>Normal Transactions:</strong> 2796 (69.9%)</p>
+                <p><strong>Fraud Transactions:</strong> 1204 (30.1%)</p>
+            </div>
+            
+            <div class="section">
+                <h2>Feature Importance</h2>
+                <p>Model features (in order of input):</p>
+                <ol>
+        <li>amount</li><li>oldbalanceOrg</li><li>newbalanceOrig</li><li>oldbalanceDest</li><li>newbalanceDest</li><li>hour</li><li>day_of_week</li><li>transaction_count_1h</li><li>transaction_count_24h</li><li>type_CASH_IN</li><li>type_CASH_OUT</li><li>type_DEBIT</li><li>type_PAYMENT</li><li>type_TRANSFER</li>
+                </ol>
+            </div>
+        </body>
+        </html>
+        
