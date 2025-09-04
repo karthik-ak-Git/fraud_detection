@@ -1,7 +1,7 @@
 // Fraud Detection Frontend JavaScript
 
 // API configuration
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'http://localhost:8000';
 
 // DOM elements
 const transactionForm = document.getElementById('transactionForm');
@@ -112,26 +112,45 @@ async function handleTransactionSubmit(event) {
     event.preventDefault();
 
     try {
-        // Show loading modal
+        // Show loading modal with debugging
+        console.log('Showing loading modal...');
         loadingModal.show();
+
+        // Ensure modal is visible
+        setTimeout(() => {
+            const modalElement = document.getElementById('loadingModal');
+            if (modalElement && !modalElement.classList.contains('show')) {
+                console.warn('Modal not showing properly, forcing display');
+                modalElement.style.display = 'block';
+                modalElement.classList.add('show');
+            }
+        }, 50);
 
         // Collect form data
         const transactionData = collectTransactionData();
+        console.log('Transaction data:', transactionData);
 
-        // Make prediction request
+        // Make prediction request with timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
         const response = await fetch(`${API_BASE_URL}/predict`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(transactionData)
+            body: JSON.stringify(transactionData),
+            signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const result = await response.json();
+        console.log('Prediction result received:', result);
 
         // Store results for feedback
         lastPredictionResult = result;
@@ -151,8 +170,29 @@ async function handleTransactionSubmit(event) {
         showToast('Failed to analyze transaction. Please try again.', 'error');
         displayError('Failed to analyze transaction. Please check your connection and try again.');
     } finally {
-        // Hide loading modal
-        loadingModal.hide();
+        // Hide loading modal with multiple approaches for reliability
+        setTimeout(() => {
+            try {
+                loadingModal.hide();
+                // Force hide if bootstrap modal doesn't work
+                const modalElement = document.getElementById('loadingModal');
+                if (modalElement) {
+                    modalElement.style.display = 'none';
+                    modalElement.classList.remove('show');
+                    // Remove backdrop if it exists
+                    const backdrop = document.querySelector('.modal-backdrop');
+                    if (backdrop) {
+                        backdrop.remove();
+                    }
+                    // Restore body classes
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                }
+            } catch (modalError) {
+                console.error('Error hiding modal:', modalError);
+            }
+        }, 100); // Small delay to ensure all operations complete
     }
 }
 
@@ -191,6 +231,11 @@ function displayPredictionResult(result) {
     const riskScore = result.risk_score;
     const fraudProb = (result.fraud_probability * 100).toFixed(1);
 
+    // Format confidence properly
+    const confidenceDisplay = typeof confidence === 'string'
+        ? confidence.toUpperCase()
+        : `${(confidence * 100).toFixed(1)}%`;
+
     // Determine risk level
     let riskLevel, riskClass;
     if (riskScore >= 7) {
@@ -212,7 +257,7 @@ function displayPredictionResult(result) {
                         <i class="fas fa-${isFraud ? 'exclamation-triangle' : 'check-circle'} fa-2x me-3"></i>
                         <div>
                             <h3 class="mb-1">${isFraud ? 'POTENTIAL FRAUD DETECTED' : 'TRANSACTION APPEARS NORMAL'}</h3>
-                            <p class="mb-0">Confidence: ${confidence.toUpperCase()}</p>
+                            <p class="mb-0">Confidence: ${confidenceDisplay}</p>
                         </div>
                     </div>
                     

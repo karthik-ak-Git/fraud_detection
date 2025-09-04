@@ -132,12 +132,12 @@ class EnhancedFraudDetectionNN(nn.Module):
                 )
 
         # Output layers with multiple heads for ensemble-like behavior
-        self.output_layers = nn.ModuleList([
+        self.output_layers = nn.Sequential(
             nn.Linear(prev_size, prev_size // 2),
             nn.GELU(),
             nn.Dropout(dropout_rate * 0.5),
             nn.Linear(prev_size // 2, output_size)
-        ])
+        )
 
         # Additional output head for regularization
         self.aux_output = nn.Linear(
@@ -161,6 +161,14 @@ class EnhancedFraudDetectionNN(nn.Module):
 
     def forward(self, x, return_aux=False):
         """Enhanced forward pass with auxiliary outputs"""
+        # Handle input preprocessing
+        if isinstance(x, np.ndarray):
+            x = torch.FloatTensor(x)
+
+        # Ensure proper batch dimension
+        if x.dim() == 1:
+            x = x.unsqueeze(0)
+
         # Input normalization
         x = self.input_bn(x)
 
@@ -189,9 +197,7 @@ class EnhancedFraudDetectionNN(nn.Module):
                     res_input = x
 
         # Final output layers
-        main_output = x
-        for layer in self.output_layers:
-            main_output = layer(main_output)
+        main_output = self.output_layers(x)
 
         if return_aux and intermediate_outputs:
             aux_output = self.aux_output(intermediate_outputs[-1])
@@ -264,6 +270,14 @@ class MultiScaleFraudDetectionNN(nn.Module):
         )
 
     def forward(self, x):
+        # Handle input preprocessing
+        if isinstance(x, np.ndarray):
+            x = torch.FloatTensor(x)
+
+        # Ensure proper batch dimension
+        if x.dim() == 1:
+            x = x.unsqueeze(0)
+
         s1 = self.scale1(x)
         s2 = self.scale2(x)
         s3 = self.scale3(x)
@@ -273,6 +287,22 @@ class MultiScaleFraudDetectionNN(nn.Module):
         output = self.fusion(fused)
 
         return output
+
+    def predict_proba(self, x):
+        """Get prediction probabilities"""
+        with torch.no_grad():
+            self.eval()
+            logits = self.forward(x)
+            probs = F.softmax(logits, dim=1)
+            return probs
+
+    def predict(self, x):
+        """Get class predictions"""
+        with torch.no_grad():
+            self.eval()
+            logits = self.forward(x)
+            predictions = torch.argmax(logits, dim=1)
+            return predictions
 
 
 class FraudDetectionTransformer(nn.Module):
@@ -313,6 +343,14 @@ class FraudDetectionTransformer(nn.Module):
         )
 
     def forward(self, x):
+        # Handle input preprocessing
+        if isinstance(x, np.ndarray):
+            x = torch.FloatTensor(x)
+
+        # Ensure proper batch dimension
+        if x.dim() == 1:
+            x = x.unsqueeze(0)
+
         batch_size = x.size(0)
 
         # Reshape for transformer: (batch, features) -> (features, batch, d_model)
@@ -340,6 +378,22 @@ class FraudDetectionTransformer(nn.Module):
         output = self.output_head(x)
 
         return output
+
+    def predict_proba(self, x):
+        """Get prediction probabilities"""
+        with torch.no_grad():
+            self.eval()
+            logits = self.forward(x)
+            probs = F.softmax(logits, dim=1)
+            return probs
+
+    def predict(self, x):
+        """Get class predictions"""
+        with torch.no_grad():
+            self.eval()
+            logits = self.forward(x)
+            predictions = torch.argmax(logits, dim=1)
+            return predictions
 
 
 # Keep the original classes for backward compatibility
@@ -399,6 +453,20 @@ class FraudDetectionLSTM(nn.Module):
         )
 
     def forward(self, x):
+        # Handle input preprocessing for LSTM
+        if isinstance(x, np.ndarray):
+            x = torch.FloatTensor(x)
+
+        # Ensure proper batch dimension
+        if x.dim() == 2:
+            # Reshape for LSTM: (batch, sequence, features)
+            batch_size = x.size(0)
+            # Create sequence by repeating features
+            x = x.unsqueeze(1).repeat(1, self.sequence_length, 1)
+        elif x.dim() == 1:
+            # Single sample case
+            x = x.unsqueeze(0).unsqueeze(0).repeat(1, self.sequence_length, 1)
+
         # LSTM forward pass
         lstm_out, (hidden, cell) = self.lstm(x)
 
@@ -412,6 +480,22 @@ class FraudDetectionLSTM(nn.Module):
         output = self.output_layers(last_output)
 
         return output
+
+    def predict_proba(self, x):
+        """Get prediction probabilities"""
+        with torch.no_grad():
+            self.eval()
+            logits = self.forward(x)
+            probs = F.softmax(logits, dim=1)
+            return probs
+
+    def predict(self, x):
+        """Get class predictions"""
+        with torch.no_grad():
+            self.eval()
+            logits = self.forward(x)
+            predictions = torch.argmax(logits, dim=1)
+            return predictions
 
 
 def get_model(model_type: str, input_size: int, **kwargs):
